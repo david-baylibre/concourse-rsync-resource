@@ -35,22 +35,31 @@ SERVERS=$(jq -r '.source.servers + [.source.server]|join(" ")'< $SCRIPT_INPUT)
 PORT=$(jq -r '.source.port // ""' < $SCRIPT_INPUT)
 BASE_DIR=$(jq -r '.source.base_dir // ""' < $SCRIPT_INPUT)
 USER=$(jq -r '.source.user // ""' < $SCRIPT_INPUT)
+EXCLUDE=$(jq -r '.source.exclude // ""' < $SCRIPT_INPUT)
 SYNC_DIR=$(jq -r '.params.sync_dir // ""' < $SCRIPT_INPUT)
 RSYNC_OPTS_ARR=$(jq -r '.params.rsync_opts // ""' < $SCRIPT_INPUT)
 jq -re '.source.disable_version_path' < $SCRIPT_INPUT >/dev/null
 DISABLE_VERSION_PATH=$?
+
+EXCLUDE=$(echo ${EXCLUDE} \
+  | sed -e 's/ /\\|/g' \
+        -e 's/\./\\\./g' \
+        -e 's/\*/\.\*/g')
+EXCLUDE_FILTER=""
+if [ -n "${EXCLUDE}" ]; then
+  EXCLUDE_FILTER="! -regex \".*/\(${EXCLUDE}\)\""
+fi
 
 jq -re '.source.version_ref' < $SCRIPT_INPUT >/dev/null
 
 if [ $? -eq 1 ]; then
     # next best thing is timestamp of latest file
     echo "No version ref found in parameters; using latest timestamp" 1>&2
-    VERSION_REF=$(find "$SRC_DIR/$SYNC_DIR" -type f -printf '%T@\n' | cut -d. -f1 | sort -n | tail -1)
+    VERSION_REF=$(find "$SRC_DIR/$SYNC_DIR" -type f ${EXCLUDE_FILTER} -printf '%T@\n' | cut -d. -f1 | sort -n | tail -1)
 else
     VERSION_REF=$(jq -re '.source.version_ref // ""' < $SCRIPT_INPUT)
     echo "Found version_ref in params.  Value: ${VERSION_REF}" 1>&2
 fi
-
 
 if [ -z "$RSYNC_OPTS_ARR" ]
 then
