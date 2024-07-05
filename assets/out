@@ -113,9 +113,9 @@ do
     eval $CMD 1>&2
 
     if [ $? -eq 0 ]; then
-        RSYNC_CMD="rsync $RSYNC_OPTS -e 'ssh -i ~/.ssh/server_key -p $PORT'  $SRC_DIR/$SYNC_DIR/ $USER@$SERVER:$DEST_DIR"
+        RSYNC_CMD="rsync $RSYNC_OPTS -e 'ssh -i ~/.ssh/server_key -p $PORT' $SRC_DIR/$SYNC_DIR/ $USER@$SERVER:$DEST_DIR"
         echo $RSYNC_CMD 1>&2
-        eval $RSYNC_CMD  1>&2
+        eval $RSYNC_CMD 1>&2
 
         if [ $REPORTED_VERSION -eq 0 ]
         then
