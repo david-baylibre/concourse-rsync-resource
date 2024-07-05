@@ -6,6 +6,7 @@
 * `port`: *Optional* Server SSH port, default is port 22
 * `base_dir`: *Required* Base directory in which to place the artifacts
 * `user`: *Required* User credential for login using ssh
+* `exclude`: *Optional* Files excluded while computing the version. A `git pull` modifies files timestamp in `.git` directory for instance if no new version is available, the content remains the same. This leads to a new version everytime which is not desired. Excluded files are synced along other files.
 * `private_key`: *Required* Key for the specified user
 * `disable_version_path`: default is `false`. Then `false` `out` will put content in a directory named by the version name. This directory is omitted when this option is enabled. Note that `check` and `in` origins will treat all the files in the `base_dir` as versions in this case.
 
@@ -40,6 +41,16 @@ resources:
     base_dir: /sync_directory
     user : user
     disable_version_path: false
+    private_key: |
+            ...
+
+- name: sync-resource-exclude
+  type: rsync-resource
+  source:
+    server: server
+    base_dir: /sync_directory
+    user : user
+    exclude : ".git/* *.in configure *.m4 [Rr][Ee][Aa][Dd][Mm][Ee]"
     private_key: |
             ...
 
