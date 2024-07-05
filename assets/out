@@ -43,15 +43,6 @@ DISABLE_VERSION_PATH=$?
 
 jq -re '.source.version_ref' < $SCRIPT_INPUT >/dev/null
 
-EXCLUDE=$(echo ${EXCLUDE} \
-  | sed -e 's/ /\\|/g' \
-        -e 's/\./\\\./g' \
-        -e 's/\*/\.\*/g')
-EXCLUDE_FILTER=""
-if [ -n "${EXCLUDE}" ]; then
-  EXCLUDE_FILTER="! -regex \".*/\(${EXCLUDE}\)\""
-fi
-
 if [ $? -eq 1 ]; then
     # next best thing is timestamp of latest file
     echo "No version ref found in parameters; using latest timestamp" 1>&2
@@ -61,6 +52,14 @@ else
     echo "Found version_ref in params.  Value: ${VERSION_REF}" 1>&2
 fi
 
+EXCLUDE=$(echo ${EXCLUDE} \
+  | sed -e 's/ /\\|/g' \
+        -e 's/\./\\\./g' \
+        -e 's/\*/\.\*/g')
+EXCLUDE_FILTER=""
+if [ -n "${EXCLUDE}" ]; then
+  EXCLUDE_FILTER="! -regex \".*/\(${EXCLUDE}\)\""
+fi
 
 if [ -z "$RSYNC_OPTS_ARR" ]
 then
