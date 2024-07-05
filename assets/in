@@ -56,11 +56,11 @@ if [ "$skip_download" = "false" ]; then
     fi
 
     echo $SCRIPT_INPUT 1>&2
-    echo $SERVER    1>&2
-    echo $PORT      1>&2
-    echo $BASE_DIR  1>&2
-    echo $USER      1>&2
-    echo $VERSION   1>&2
+    echo $SERVER       1>&2
+    echo $PORT         1>&2
+    echo $BASE_DIR     1>&2
+    echo $USER         1>&2
+    echo $VERSION      1>&2
     echo $EXCLUDE      1>&2
 
     mkdir -p ~/.ssh
