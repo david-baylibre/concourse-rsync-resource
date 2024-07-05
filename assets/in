@@ -86,7 +86,7 @@ if [ "$skip_download" = "false" ]; then
             -e 's/\./\\\./g' \
             -e 's/\*/\.\*/g')
     EXCLUDE_FILTER=""
-    if [ -n $EXCLUDE_FILTER ]; then
+    if [ -n "${EXCLUDE}" ]; then
       EXCLUDE_FILTER="! -regex \".*/\(${EXCLUDE}\)\""
     fi
 
